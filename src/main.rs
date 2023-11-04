@@ -60,6 +60,20 @@ struct WeightRecord {
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
+struct StepsRecord {
+    date: String,
+    exercise: String,
+    _type: String,
+    exercise_calories: String,
+    exercise_minutes: String,
+    sets: String,
+    rps: String,
+    kilograms: String,
+    steps: String,
+    note: String,
+}
+
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
 struct RawWorkoutRecord {
     date: String,
     workout_name: String,
@@ -142,7 +156,6 @@ impl From<Vec<RawWorkoutRecord>> for LastFourDaysWorkouts {
                 raw_workout_record.weight.clone(),
                 raw_workout_record.reps.clone(),
             );
-            let date_copy = raw_workout_record.date.clone();
             let name_copy: String = raw_workout_record.exercise_name.clone();
 
             records_grouped_by_date
@@ -275,7 +288,10 @@ fn build_nutrition_csv_for_clipboard(records: Vec<RawNutritionRecord>) {
     wtr.into_inner().ok();
 }
 
-fn build_weight_csv_for_clipboard(records: Vec<WeightRecord>) {
+fn generic_build_csv_for_clipboard<R>(records: Vec<R>)
+where
+    R: serde::Serialize,
+{
     let mut wtr = csv::Writer::from_writer(io::stdout());
 
     for record in records {
@@ -322,6 +338,7 @@ fn build_workout_csv_for_clipboard(records: Vec<RawWorkoutRecord>) {
     let last_four_days_records = LastFourDaysWorkouts::from(records);
 
     for data in last_four_days_records.data {
+        println!("Date: {}", &data.0);
         for exercise_row in data.1.exercises.map {
             let row = flatten(&exercise_row.1.sets);
 
@@ -331,6 +348,32 @@ fn build_workout_csv_for_clipboard(records: Vec<RawWorkoutRecord>) {
         }
         println!("")
     }
+}
+
+fn deserialize_steps_csv(mut rdr: Reader<File>) -> Result<Vec<StepsRecord>, Box<dyn Error>> {
+    let new_headers = rdr
+        .headers()
+        .iter()
+        .next()
+        .unwrap()
+        .iter()
+        .map(|h| match h {
+            "Type" => "_type",
+            "Exercise Calories" => "exercise_calories",
+            "Exercise Minutes" => "exercise_minutes",
+            "Reps Per Set" => "rps",
+            _ => h,
+        })
+        .map(|h| h.to_lowercase())
+        .collect::<csv::StringRecord>();
+
+    rdr.set_headers(new_headers);
+
+    // Partition suggestion taken from https://doc.rust-lang.org/rust-by-example/error/iter_result.html
+    let (records, _): (Vec<_>, Vec<_>) = rdr.deserialize().partition(Result::is_ok);
+    let records: Vec<StepsRecord> = records.into_iter().map(Result::unwrap).collect();
+
+    Ok(records)
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -345,7 +388,12 @@ fn main() -> Result<(), Box<dyn Error>> {
         "weight" => {
             let csv_reader = read_csv(filename)?;
             let records = deserialize_weight_csv(csv_reader).unwrap();
-            build_weight_csv_for_clipboard(records);
+            generic_build_csv_for_clipboard(records);
+        }
+        "steps" => {
+            let csv_reader = read_csv(filename)?;
+            let records = deserialize_steps_csv(csv_reader).unwrap();
+            generic_build_csv_for_clipboard(records);
         }
         "workouts" => {
             let csv_reader = read_csv(filename)?;
