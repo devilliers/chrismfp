@@ -7,8 +7,6 @@ use yew::html::TargetCast;
 use yew::{html, Callback, Component, Context, Html};
 mod mfp;
 
-// TODO: use https://plippe.github.io/blog/2021/07/12/rust-wasm-github.html for github pages
-
 #[allow(dead_code)]
 struct FileDetails {
     name: String,
