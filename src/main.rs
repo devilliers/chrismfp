@@ -89,7 +89,10 @@ impl Component for App {
     fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
             <div id="wrapper">
-                <p id="title">{ "Process your MyFitnessPal data for Chris' Google Sheets" }</p>
+                <p id="title">{ "MyFitnessPal --> Chris' Google Sheets" }</p>
+                <a href="https://support.myfitnesspal.com/hc/en-us/articles/360032273352-Data-Export-FAQs">{"How to export your data from MyFitnessPal"}</a>
+                <br />
+                <br />
                 <label for="file-process">
                     <div
                         id="drop-container"
@@ -119,6 +122,7 @@ impl Component for App {
                         Self::process_files(input.files())
                     })}
                 />
+                <h4>{"Processed files are displayed below; copy the text and paste into chris' sheets."}</h4>
                 <div id="preview-area">
                     { for self.files.iter().map(Self::view_file) }
                 </div>

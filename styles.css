@@ -76,3 +76,9 @@ input#file-process {
   flex-direction: column;
   justify-content: center;
 }
+
+a {
+  font-size: 20px;
+  text-align: center;
+  color: blue;
+}
