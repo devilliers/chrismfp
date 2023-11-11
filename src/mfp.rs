@@ -251,5 +251,11 @@ where
     let mut bytes = &buf[..];
     let mut out = String::new();
     bytes.read_to_string(&mut out).unwrap();
+
+    // FIXME this hack fixes a bug somewhere in the code...
+    if out.contains("protein") {
+        out = out.replace("protein,carbohydrates,fat\n", "")
+    }
+
     out
 }

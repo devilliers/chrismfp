@@ -21,6 +21,10 @@ p {
   text-align: center;
 }
 
+h4 {
+  text-align: center;
+}
+
 label {
   cursor: pointer;
 }
@@ -81,4 +85,10 @@ a {
   font-size: 20px;
   text-align: center;
   color: blue;
+}
+
+.line{
+	height: 47px;
+	border-bottom: 1px solid white;
+	justify-content: center;
 }

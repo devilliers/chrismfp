@@ -60,7 +60,6 @@ impl Component for App {
 
                         gloo::file::callbacks::read_as_text(&file, move |res| {
                             let res_ok = res.expect("failed to read file");
-                            web_sys::console::log_1(&res_ok.clone().into());
                             let file_bytes = res_ok.as_bytes();
                             let process_file_type = {
                                 if file_name.contains("Exercise") {
@@ -73,9 +72,7 @@ impl Component for App {
                                     ""
                                 }
                             };
-                            web_sys::console::log_1(&process_file_type.into());
                             let processed_file = mfp::process(file_bytes, process_file_type);
-                            web_sys::console::log_1(&processed_file.clone().into());
                             link.send_message(Msg::Loaded(file_name, file_type, processed_file))
                         })
                     };
@@ -90,9 +87,7 @@ impl Component for App {
         html! {
             <div id="wrapper">
                 <p id="title">{ "MyFitnessPal --> Chris' Google Sheets" }</p>
-                <a href="https://support.myfitnesspal.com/hc/en-us/articles/360032273352-Data-Export-FAQs">{"How to export your data from MyFitnessPal"}</a>
-                <br />
-                <br />
+                <a href="https://support.myfitnesspal.com/hc/en-us/articles/360032273352-Data-Export-FAQs"><p>{"How to export your data from MyFitnessPal"}</p></a>
                 <label for="file-process">
                     <div
                         id="drop-container"
@@ -126,6 +121,18 @@ impl Component for App {
                 <div id="preview-area">
                     { for self.files.iter().map(Self::view_file) }
                 </div>
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <p class="line"></p>
+                <p>{ "Note - no data leaves your computer; all processing is done within your browser." }</p>
             </div>
         }
     }
