@@ -232,15 +232,15 @@ where
     let mut buf = vec![];
 
     match file_type {
-        "nutrition" => {
+        "Macros" => {
             let records = deserialize_nutrition_csv(csv_reader).unwrap();
             build_nutrition_csv_for_clipboard(records, Box::new(&mut buf));
         }
-        "weight" => {
+        "Weight" => {
             let records = deserialize_weight_csv(csv_reader);
             generic_build_csv_for_clipboard(records, Box::new(&mut buf));
         }
-        "steps" => {
+        "Steps" => {
             let records = deserialize_steps_csv(csv_reader);
             generic_build_csv_for_clipboard(records, Box::new(&mut buf));
         }
@@ -257,5 +257,6 @@ where
         out = out.replace("protein,carbohydrates,fat\n", "")
     }
 
+    out = out.replace("\n", "\r\n");
     out
 }

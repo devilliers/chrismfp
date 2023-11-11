@@ -12,10 +12,11 @@ struct FileDetails {
     name: String,
     file_type: String,
     data: String,
+    data_type: String,
 }
 
 pub enum Msg {
-    Loaded(String, String, String),
+    Loaded(String, String, String, String),
     Files(Vec<File>),
 }
 
@@ -37,9 +38,10 @@ impl Component for App {
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
-            Msg::Loaded(file_name, file_type, data) => {
+            Msg::Loaded(file_name, file_type, data, data_type) => {
                 self.files.push(FileDetails {
                     data,
+                    data_type,
                     file_type,
                     name: file_name.clone(),
                 });
@@ -61,17 +63,22 @@ impl Component for App {
                             let file_bytes = res_ok.as_bytes();
                             let process_file_type = {
                                 if file_name.contains("Exercise") {
-                                    "steps"
+                                    "Steps"
                                 } else if file_name.contains("Nutrition") {
-                                    "nutrition"
+                                    "Macros"
                                 } else if file_name.contains("Measurement") {
-                                    "weight"
+                                    "Weight"
                                 } else {
                                     ""
                                 }
                             };
                             let processed_file = mfp::process(file_bytes, process_file_type);
-                            link.send_message(Msg::Loaded(file_name, file_type, processed_file))
+                            link.send_message(Msg::Loaded(
+                                file_name,
+                                file_type,
+                                processed_file,
+                                process_file_type.to_string(),
+                            ))
                         })
                     };
                     self.readers.insert(file_name, task);
@@ -87,6 +94,7 @@ impl Component for App {
                 <p id="title">{ "🏋️ MyFitnessPal ➡️ Chris' Google Sheets 📈" }</p>
                 <p>{"1. Export your data from MyFitnessPal (instructions "}<a href="https://support.myfitnesspal.com/hc/en-us/articles/360032273352-Data-Export-FAQs">{"here"}</a>{")"}</p>
                 <p>{"2. Process the files below..."}</p>
+                <p>{"3. Paste into Chris' spreadsheets (Cmd+shift+V or Ctrl+shift+V to paste values only)"}</p>
                 <label for="file-process">
                     <div
                         id="drop-container"
@@ -140,8 +148,8 @@ impl App {
     fn view_file(file: &FileDetails) -> Html {
         html! {
             <div class="preview-tile">
-                <b><p class="preview-name">{ format!("{}", file.name) }</p></b>
-                <p class="preview-name" style="white-space: pre-line">{ format!("{}", &file.data) }</p>
+                <p class="preview-name"><b>{ format!("{}", file.data_type) }</b>{format!(" ({})", file.name) }</p>
+                <pre class="preview-media">{ format!("{}", &file.data) }</pre>
             </div>
         }
     }
