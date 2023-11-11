@@ -94,7 +94,7 @@ impl Component for App {
                 <p id="title">{ "🏋️ MyFitnessPal ➡️ Chris' Google Sheets 📈" }</p>
                 <p>{"1. Export your data from MyFitnessPal (instructions "}<a href="https://support.myfitnesspal.com/hc/en-us/articles/360032273352-Data-Export-FAQs">{"here"}</a>{")"}</p>
                 <p>{"2. Process the files below..."}</p>
-                <p>{"3. Paste into Chris' spreadsheets (Cmd+shift+V or Ctrl+shift+V to paste values only)"}</p>
+                <p>{"3. Paste into Chris' spreadsheets (without formatting, or the text will be invisible!)"}</p>
                 <label for="file-process">
                     <div
                         id="drop-container"

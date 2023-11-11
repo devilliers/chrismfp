@@ -218,7 +218,9 @@ where
 
     let mut only_steps = vec![];
     for record in records {
-        only_steps.push(record.steps);
+        if record.steps != "" {
+            only_steps.push(record.steps);
+        }
     }
 
     only_steps
